@@ -1,0 +1,87 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"opentelemetry.io/v1alpha1","kind":"OpenTelemetryCollector","metadata":{"annotations":{},"generation":1,"labels":{"app.kubernetes.io/managed-by":"opentelemetry-operator"},"name":"opentelemetry","namespace":"perf-test","resourceVersion":"7917786","uid":"694a2c90-4ff8-4abb-a785-7a2a7f386edc"},"spec":{"config":"receivers:\n  otlp:\n    protocols:\n      grpc:\n      http:\nprocessors:\n  memory_limiter:\n    check_interval: 1s\n    limit_percentage: 75\n    spike_limit_percentage: 15\n  batch:\n    send_batch_size: 10000\n    timeout: 10s\nexporters:\n  otlp/elastic:\n    endpoint: https://dev.apm.un.infradev.w4.az.network.ae:443\n    headers:\n      Authorization: Bearer Pb462Kh4t2WrC38inV59ZTV3\n    tls:\n      insecure_skip_verify: true\n    compression: none\n  logging:\n    verbosity: normal\nservice:\n  pipelines:\n    traces:\n      receivers:\n        - otlp\n      exporters:\n        - logging\n        - otlp/elastic\n    metrics:\n      receivers:\n        - otlp\n      exporters:\n        - logging\n        - otlp/elastic\n    logs:\n      receivers:\n        - otlp\n      exporters:\n        - logging\n        - otlp/elastic\n","ingress":{"route":{}},"managementState":"managed","mode":"deployment","observability":{"metrics":{}},"podDisruptionBudget":{"maxUnavailable":1},"replicas":1,"resources":{},"targetAllocator":{"prometheusCR":{"scrapeInterval":"30s"},"resources":{}},"updateStrategy":{},"upgradeStrategy":"automatic"}}
+  creationTimestamp: "2024-03-04T08:02:17Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: opentelemetry-operator
+  name: opentelemetry
+  resourceVersion: "56065444"
+  uid: bc338842-6b2c-4e48-b96b-02245687db75
+spec:
+  image: aaqasem/opentelemetry-collector:0.93.0
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+    exporters:
+      otlp/elastic:
+        endpoint: apm-server-quickstart-apm-http:8200
+        headers:
+          Authorization: Bearer  HELLO
+        tls:
+          insecure_skip_verify: true
+        compression: none
+      logging:
+        verbosity: normal
+    service:
+      pipelines:
+        traces:
+          receivers:
+            - otlp
+          exporters:
+            - logging
+            - otlp/elastic
+        metrics:
+          receivers:
+            - otlp
+          exporters:
+            - logging
+            - otlp/elastic
+        logs:
+          receivers:
+            - otlp
+          exporters:
+            - logging
+            - otlp/elastic
+  deploymentUpdateStrategy: {}
+  ingress:
+    route: {}
+  managementState: managed
+  mode: deployment
+  observability:
+    metrics: {}
+  podDisruptionBudget:
+    maxUnavailable: 1
+  replicas: 1
+  resources: {}
+  targetAllocator:
+    allocationStrategy: consistent-hashing
+    filterStrategy: relabel-config
+    observability:
+      metrics: {}
+    prometheusCR:
+      scrapeInterval: 30s
+    resources: {}
+  updateStrategy: {}
+  upgradeStrategy: automatic
+status:
+  image: aaqasem/opentelemetry-collector:0.93.0
+  scale:
+    replicas: 1
+    selector: app.kubernetes.io/component=opentelemetry-collector,app.kubernetes.io/instance=backend.opentelemetry,app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/name=opentelemetry-collector,app.kubernetes.io/part-of=opentelemetry,app.kubernetes.io/version=latest
+    statusReplicas: 1/1
+  version: 0.93.0

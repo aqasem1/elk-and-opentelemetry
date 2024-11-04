@@ -1,0 +1,100 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  annotations:
+    instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4
+    instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.2.0
+    instrumentation.opentelemetry.io/default-auto-instrumentation-go-image: ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.10.1-alpha
+    instrumentation.opentelemetry.io/default-auto-instrumentation-java-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.32.0
+    instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4
+    instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.46.0
+    instrumentation.opentelemetry.io/default-auto-instrumentation-python-image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.43b0
+  labels:
+    app.kubernetes.io/managed-by: opentelemetry-operator
+  name: otel-instrumentation
+spec:
+  apacheHttpd:
+    configPath: /usr/local/apache2/conf
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.3
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 1m
+        memory: 128Mi
+    version: "2.4"
+  dotnet:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.1.0
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+  exporter:
+    endpoint: http://opentelemetry-collector:4317
+  go:
+    env:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: deployment.environment=averta
+    - name: OTEL_LOGS_EXPORTER
+      value: otlp
+    image: ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.10.1-alpha
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 32Mi
+      requests:
+        cpu: 50m
+        memory: 32Mi
+  java:
+    env:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: deployment.environment=averta
+    - name: OTEL_LOGS_EXPORTER
+      value: otlp
+    image: aaqasem/autoinstrumentation-java:1.31.0
+    resources:
+      limits:
+        cpu: 500m
+        memory: 64Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
+  nginx:
+    configFile: /etc/nginx/nginx.conf
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.3
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 1m
+        memory: 128Mi
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.44.0
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 128Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+  propagators:
+  - tracecontext
+  - baggage
+  - b3
+  python:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.41b0
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 32Mi
+      requests:
+        cpu: 50m
+        memory: 32Mi
+  resource: {}
+  sampler:
+    type: always_on
